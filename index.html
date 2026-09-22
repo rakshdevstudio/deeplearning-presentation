@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attention Mechanism & Transformer Architecture — Interactive Presentation</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glows -->
+  <div class="bg-glow-container">
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+  </div>
+
+  <!-- Progress Bar Top -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- Main Slide Viewport -->
+  <main id="deck-viewport">
+
+    <!-- ====================================================================
+         SLIDE 1: TITLE SLIDE
+         ==================================================================== -->
+    <section class="slide active" id="slide-1">
+      <canvas id="hero-network-canvas"></canvas>
+      <div class="slide-content" style="align-items: center; justify-content: center;">
+        <div class="title-container">
+
+          <!-- College Logo & University Name -->
+          <div class="university-header">
+            <div class="university-logo-wrapper">
+              <img src="https://www.sju.edu.in/assets/img/st-joseph-university-logo.png" 
+                   onerror="this.onerror=null; this.src='assets/st-joseph-university-logo.png';" 
+                   alt="St. Joseph's University Logo" 
+                   class="university-logo-img">
+            </div>
+            <div class="university-title-block">
+              <h2 class="university-name">ST. JOSEPH'S UNIVERSITY</h2>
+              <span class="university-location">BENGALURU</span>
+            </div>
+          </div>
+
+          <!-- Main Presentation Titles -->
+          <div class="title-main-block">
+            <h1 class="hero-title">ATTENTION MECHANISM</h1>
+            <p class="hero-subtitle">How Transformers Understand Relationships Between Words</p>
+            
+            <div class="hero-flow">
+              <span class="hero-flow-step cyan">From Embeddings</span>
+              <span class="hero-flow-arrow">→</span>
+              <span class="hero-flow-step purple">Attention</span>
+              <span class="hero-flow-arrow">→</span>
+              <span class="hero-flow-step green">Context</span>
+            </div>
+          </div>
+
+          <!-- Team Members Section -->
+          <div class="team-members-card">
+            <div class="team-heading">TEAM MEMBERS</div>
+            <div class="team-grid">
+              <div class="team-member-row">
+                <span class="member-name">Rakshith C</span>
+                <span class="member-dash">—</span>
+                <span class="member-roll">33</span>
+              </div>
+              <div class="team-member-row">
+                <span class="member-name">Lakshmi S H</span>
+                <span class="member-dash">—</span>
+                <span class="member-roll">32</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="title-cta">
+            Press <kbd>→</kbd> or <kbd>Space</kbd> to begin
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 2: THE CORE QUESTION
+         ==================================================================== -->
+    <section class="slide" id="slide-2">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge purple">Visual Intuition</div>
+          <h2 class="slide-title">How Does a Model Know What Matters?</h2>
+          <p class="slide-subtitle">Words depend on other words to make sense. How does an AI resolve ambiguity?</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="question-container" id="core-question-container">
+            <div class="sentence-hero-box">
+              <svg id="core-question-svg-canvas"></svg>
+              <div class="interactive-sentence">
+                <span class="token-word">The</span>
+                <span class="token-word candidate-high" id="cq-token-animal">animal</span>
+                <span class="token-word">didn't</span>
+                <span class="token-word">cross</span>
+                <span class="token-word">the</span>
+                <span class="token-word candidate-med" id="cq-token-street">street</span>
+                <span class="token-word">because</span>
+                <span class="token-word target-query" id="cq-token-it">it</span>
+                <span class="token-word">was</span>
+                <span class="token-word candidate-med" id="cq-token-tired">tired.</span>
+              </div>
+            </div>
+
+            <div class="question-prompt-box">
+              When processing <span class="highlight">"it"</span>, which word is most important for its meaning?
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 3: WHAT IS AN EMBEDDING?
+         ==================================================================== -->
+    <section class="slide" id="slide-3">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge">Foundations</div>
+          <h2 class="slide-title">What is an Embedding?</h2>
+          <p class="slide-subtitle">Before measuring relationships, words must first become numbers in space.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="split-embedding-layout">
+            <div class="embedding-info-panel">
+              <div class="definition-box" style="font-size: 0.95rem; padding: 1rem;">
+                "An <em>embedding</em> is a numerical vector where numbers capture meaning. Words with similar meanings land close together in space."
+              </div>
+
+              <!-- Live Dynamic Inspector Card -->
+              <div class="glass-panel" style="padding: 1rem;" id="embedding-inspector-card-3">
+                <div style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--cyan); text-transform: uppercase; margin-bottom: 0.4rem;">
+                  Selected Point
+                </div>
+                <div id="inspector-word-3" style="font-size: 1.35rem; font-weight: 800; color: #fff;">
+                  🍎 Apple
+                </div>
+                <div id="inspector-coords-3" style="font-family: var(--font-mono); font-size: 1.1rem; color: #38bdf8; margin-top: 0.2rem;">
+                  Vector: [5.0, 5.0]
+                </div>
+                <div id="inspector-cat-3" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">
+                  Cluster: <span style="color:#ef4444; font-weight:600;">Fruit</span>
+                </div>
+              </div>
+
+              <!-- Compact reference list -->
+              <div class="glass-panel" style="padding: 0.85rem; font-family: var(--font-mono); font-size: 0.8rem;">
+                <div style="color:var(--text-dim); margin-bottom:0.4rem; text-transform:uppercase; font-size:0.7rem;">Coordinates Preview</div>
+                <div style="display:flex; justify-content:space-between; padding:0.25rem 0; border-bottom:1px solid rgba(255,255,255,0.05);"><span>🍎 Apple</span><span style="color:var(--cyan);">[5.0, 5.0]</span></div>
+                <div style="display:flex; justify-content:space-between; padding:0.25rem 0; border-bottom:1px solid rgba(255,255,255,0.05);"><span>🍌 Banana</span><span style="color:var(--cyan);">[6.6, 5.2]</span></div>
+                <div style="display:flex; justify-content:space-between; padding:0.25rem 0;"><span>🍓 Strawberry</span><span style="color:var(--cyan);">[5.0, 3.8]</span></div>
+              </div>
+            </div>
+
+            <div class="graph-container">
+              <svg id="embedding-svg-3"></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 4: INTERACTIVE EMBEDDING SPACE
+         ==================================================================== -->
+    <section class="slide" id="slide-4">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge green">Semantic Space</div>
+          <h2 class="slide-title">Clusters & Transformations</h2>
+          <p class="slide-subtitle">Similar concepts occupy nearby regions. Linear layers rotate and stretch these coordinates.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="split-embedding-layout">
+            <div class="embedding-info-panel">
+              <div class="glass-panel" style="padding: 1.25rem;">
+                <div id="embedding-inspector-text" style="font-size: 0.95rem; color: #e2e8f0;">
+                  Hover over any point to inspect its vector coordinates and semantic cluster.
+                </div>
+              </div>
+
+              <div class="transform-controls">
+                <div style="font-size:0.85rem; font-weight:bold; color:var(--cyan); text-transform:uppercase; letter-spacing:0.05em;">
+                  Linear Transformations (W Matrix)
+                </div>
+                <div class="control-row">
+                  <span>Rotate</span>
+                  <input type="range" id="slider-rotate" min="-90" max="90" value="0">
+                  <span id="val-rotate" style="font-family:monospace; min-width:40px;">0°</span>
+                </div>
+                <div class="control-row">
+                  <span>Stretch X</span>
+                  <input type="range" id="slider-stretch-x" min="0.5" max="2.0" step="0.1" value="1">
+                  <span id="val-stretch-x" style="font-family:monospace; min-width:40px;">1.0x</span>
+                </div>
+                <div class="control-row">
+                  <span>Stretch Y</span>
+                  <input type="range" id="slider-stretch-y" min="0.5" max="2.0" step="0.1" value="1">
+                  <span id="val-stretch-y" style="font-family:monospace; min-width:40px;">1.0x</span>
+                </div>
+                <button class="quiz-btn secondary" id="reset-transform-btn" style="margin-top:0.4rem;">Reset Matrix</button>
+              </div>
+            </div>
+
+            <div class="graph-container">
+              <svg id="embedding-svg-4"></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 5: EMBEDDING QUIZ
+         ==================================================================== -->
+    <section class="slide" id="slide-5">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge orange">Interactive Challenge</div>
+          <h2 class="slide-title">Where Should APPLE Go?</h2>
+          <p class="slide-subtitle">Click anywhere on the grid to predict where the embedding for Apple should land.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="quiz-wrapper">
+            <div class="graph-container">
+              <svg id="quiz-svg"></svg>
+            </div>
+
+            <div class="quiz-side-panel">
+              <div class="quiz-instruction-card">
+                <div style="font-size: 0.85rem; color: var(--text-muted);">Target Token:</div>
+                <div class="quiz-word-badge" id="quiz-target-word">🍎 Apple</div>
+                <p style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.5rem;">
+                  Click the coordinate grid where Apple best fits relative to existing items.
+                </p>
+
+                <div class="quiz-btn-row" style="margin-top: 1rem;">
+                  <button class="quiz-btn primary" id="quiz-mode-1">Fruit Quiz</button>
+                  <button class="quiz-btn secondary" id="quiz-mode-2">Tech Polysemy</button>
+                </div>
+              </div>
+
+              <div id="quiz-feedback-box" class="quiz-feedback"></div>
+
+              <div class="quiz-btn-row">
+                <button class="quiz-btn secondary" id="quiz-reset-btn" style="flex:1;">Clear</button>
+                <button class="quiz-btn primary" id="quiz-reveal-btn" style="flex:1;">Reveal Target</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 6: FROM EMBEDDINGS TO RELATIONSHIPS
+         ==================================================================== -->
+    <section class="slide" id="slide-6">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge purple">Intuition</div>
+          <h2 class="slide-title">From Embeddings to Relationships</h2>
+          <p class="slide-subtitle">In a sentence, every single word can potentially connect with every other word.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="chord-sentence-container">
+            <div class="chord-vis-box">
+              <svg id="chord-svg"></svg>
+            </div>
+
+            <div class="chord-controls-bar" id="chord-info-banner">
+              Hover over any word above to isolate its network of pairwise relationships.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 7: WHAT ATTENTION DOES: WEIGHTED FOCUS
+         ==================================================================== -->
+    <section class="slide" id="slide-7">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge orange">Core Concept</div>
+          <h2 class="slide-title">Attention = Weighted Focus</h2>
+          <p class="slide-subtitle">"Attention allows a model to focus on the most relevant parts of an input by assigning different weights."</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="attention-focus-layout">
+            <div class="attention-beam-stage">
+              <svg id="attention-beam-svg"></svg>
+            </div>
+
+            <div class="focus-weights-panel">
+              <div class="weight-item-card high">
+                <div>
+                  <div style="font-weight:700; color:#fff;">it → animal</div>
+                  <div style="font-size:0.75rem; color:#fed7aa;">Main antecedent reference</div>
+                </div>
+                <span class="weight-tag high">HIGH</span>
+              </div>
+
+              <div class="weight-item-card med">
+                <div>
+                  <div style="font-weight:700; color:#fff;">it → tired</div>
+                  <div style="font-size:0.75rem; color:#e9d5ff;">Supporting condition</div>
+                </div>
+                <span class="weight-tag med">MEDIUM</span>
+              </div>
+
+              <div class="weight-item-card">
+                <div>
+                  <div style="font-weight:700; color:#fff;">it → street</div>
+                  <div style="font-size:0.75rem; color:#94a3b8;">Context noun</div>
+                </div>
+                <span class="weight-tag low">LOW</span>
+              </div>
+
+              <div class="weight-item-card">
+                <div>
+                  <div style="font-weight:700; color:#fff;">it → because / didn't</div>
+                  <div style="font-size:0.75rem; color:#94a3b8;">Grammar / syntax tokens</div>
+                </div>
+                <span class="weight-tag low">LOW</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 8: ATTENTION SCORES
+         ==================================================================== -->
+    <section class="slide" id="slide-8">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge">Step 1 — Scoring</div>
+          <h2 class="slide-title">Raw Attention Relevance Scores</h2>
+          <p class="slide-subtitle">Computed via dot products (QKᵀ). High dot product = strong directional alignment in vector space.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="scores-layout">
+            <div class="scores-chart-container" id="scores-container-8">
+              <!-- Dynamically populated -->
+            </div>
+
+            <div class="softmax-bridge-visual">
+              <div style="color: var(--cyan); font-family: var(--font-mono); font-size: 0.9rem; text-transform: uppercase;">
+                Query Token: "it"
+              </div>
+              <div class="math-formula-box">
+                Score(i, j) = Qᵢ · Kⱼᵀ
+              </div>
+              <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 380px;">
+                These numbers measure raw alignment. Notice that they can be arbitrary magnitudes and do not yet sum to 100%.
+              </p>
+              <div style="font-size: 0.75rem; color: #64748b; font-family: monospace;">
+                * Illustrative demonstration scores
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 9: ATTENTION WEIGHTS (SOFTMAX)
+         ==================================================================== -->
+    <section class="slide" id="slide-9">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge purple">Step 2 — Softmax</div>
+          <h2 class="slide-title">From Scores to Normalized Weights</h2>
+          <p class="slide-subtitle">Softmax exponentiates and divides by the sum, converting raw scores into probabilities summing to 1.00.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="scores-layout">
+            <div class="scores-chart-container" id="softmax-container-9">
+              <!-- Dynamically populated -->
+            </div>
+
+            <div class="softmax-bridge-visual">
+              <div style="color: var(--purple); font-family: var(--font-mono); font-size: 0.9rem; text-transform: uppercase;">
+                Softmax Transformation
+              </div>
+              <div class="math-formula-box">
+                αᵢ = exp(sᵢ) / ∑ exp(sⱼ)
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem; color:var(--green); font-weight:bold; font-family:monospace;">
+                <span>Total Sum = 1.00 (100%)</span>
+              </div>
+              <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 380px;">
+                Higher scores get amplified exponentially. "animal" captures 65% of the total attention budget!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 10: Q, K AND V
+         ==================================================================== -->
+    <section class="slide" id="slide-10">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge">The Core Mechanism</div>
+          <h2 class="slide-title">The Three Pieces Behind Attention: Q, K, V</h2>
+          <p class="slide-subtitle">Input embeddings are linearly projected into three distinct vectors, each with a specialized role.</p>
+        </div>
+
+        <div class="slide-body">
+          <div style="width: 100%; display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="qkv-cards-grid">
+              <div class="qkv-card query">
+                <div class="qkv-letter">Q</div>
+                <div class="qkv-title">Query</div>
+                <div class="qkv-analogy">"What am I looking for?"</div>
+                <div class="qkv-role">Represents the current token probing the rest of the sentence for relevant context.</div>
+              </div>
+
+              <div class="qkv-card key">
+                <div class="qkv-letter">K</div>
+                <div class="qkv-title">Key</div>
+                <div class="qkv-analogy">"What do I offer for matching?"</div>
+                <div class="qkv-role">Represents a label or index that candidate tokens present to be matched against the Query.</div>
+              </div>
+
+              <div class="qkv-card value">
+                <div class="qkv-letter">V</div>
+                <div class="qkv-title">Value</div>
+                <div class="qkv-analogy">"What content do I pass forward?"</div>
+                <div class="qkv-role">Contains the actual semantic information that will be weighted and merged into the final vector.</div>
+              </div>
+            </div>
+
+            <div class="qkv-synthesis-bar">
+              <span style="color:var(--cyan);">Q × Kᵀ</span> = Relevance Score
+              <span style="color:var(--text-dim);">|</span>
+              <span style="color:var(--purple);">Softmax(Score)</span> = Attention Weights
+              <span style="color:var(--text-dim);">|</span>
+              <span style="color:var(--green);">Weights × V</span> = Contextual Vector
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 11: CALCULATING ATTENTION (STEPPER)
+         ==================================================================== -->
+    <section class="slide" id="slide-11">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge purple">Interactive Stepper</div>
+          <h2 class="slide-title">Calculating Scaled Dot-Product Attention</h2>
+          <p class="slide-subtitle">Step through the mathematical pipeline from input embeddings to the final contextual token.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="stepper-container">
+            <div class="step-indicator-bar">
+              <div class="step-node active" id="step-node-1">1</div>
+              <div class="step-node" id="step-node-2">2</div>
+              <div class="step-node" id="step-node-3">3</div>
+              <div class="step-node" id="step-node-4">4</div>
+              <div class="step-node" id="step-node-5">5</div>
+              <div class="step-node" id="step-node-6">6</div>
+            </div>
+
+            <div class="step-stage-card">
+              <div class="step-explanation-col">
+                <div class="step-num-badge" id="stepper-badge">STEP 1 OF 6</div>
+                <h3 class="step-heading" id="stepper-title">Create Q, K & V</h3>
+                <div class="step-formula-box" id="stepper-formula">Q = X · W_Q | K = X · W_K | V = X · W_V</div>
+                <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.6;" id="stepper-desc">
+                  Convert input embeddings into Query, Key, and Value vectors via linear projection matrices.
+                </p>
+              </div>
+
+              <div class="step-interactive-vis" id="stepper-vis">
+                <!-- Vis populated by JS -->
+              </div>
+            </div>
+
+            <div class="stepper-nav-controls">
+              <button class="quiz-btn secondary" id="stepper-prev-btn">← Previous Step</button>
+              <button class="quiz-btn primary" id="stepper-next-btn">Next Step →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 12: FORMULA
+         ==================================================================== -->
+    <section class="slide" id="slide-12">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge green">Formal Mathematics</div>
+          <h2 class="slide-title">The Attention Formula</h2>
+          <p class="slide-subtitle">Hover over or click any term in the formula to see its visual and operational function.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="formula-slide-container">
+            <div class="big-formula-display">
+              <span style="color:#94a3b8;">Attention(Q, K, V) = </span>
+              <span class="formula-part part-softmax active" data-part="softmax">Softmax</span>
+              <span style="color:#94a3b8;">(</span>
+              <span class="formula-part part-qkt active" data-part="qkt">Q Kᵀ</span>
+              <span style="color:#94a3b8;">/</span>
+              <span class="formula-part part-scale active" data-part="scale">√dₖ</span>
+              <span style="color:#94a3b8;">)</span>
+              <span class="formula-part part-v active" data-part="v">V</span>
+            </div>
+
+            <div class="formula-breakdown-cards">
+              <div class="breakdown-card" data-part="qkt">
+                <div class="breakdown-card-sym" style="color:var(--cyan);">Q Kᵀ</div>
+                <div style="font-size:0.95rem; font-weight:600; color:#fff;">Relevance Scores</div>
+                <p style="font-size:0.8rem; color:#94a3b8; margin-top:0.4rem;">Computes pairwise dot product similarities across all tokens.</p>
+              </div>
+
+              <div class="breakdown-card" data-part="scale">
+                <div class="breakdown-card-sym" style="color:var(--blue);">√dₖ</div>
+                <div style="font-size:0.95rem; font-weight:600; color:#fff;">Scaling Factor</div>
+                <p style="font-size:0.8rem; color:#94a3b8; margin-top:0.4rem;">Prevents extreme scores and vanishing gradients in deep networks.</p>
+              </div>
+
+              <div class="breakdown-card" data-part="softmax">
+                <div class="breakdown-card-sym" style="color:var(--purple);">Softmax</div>
+                <div style="font-size:0.95rem; font-weight:600; color:#fff;">Attention Weights</div>
+                <p style="font-size:0.8rem; color:#94a3b8; margin-top:0.4rem;">Converts raw logits into a valid probability distribution summing to 1.</p>
+              </div>
+
+              <div class="breakdown-card" data-part="v">
+                <div class="breakdown-card-sym" style="color:var(--green);">× V</div>
+                <div style="font-size:0.95rem; font-weight:600; color:#fff;">Information Mixing</div>
+                <p style="font-size:0.8rem; color:#94a3b8; margin-top:0.4rem;">Blends token features weighted by their calculated attention relevance.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 13: WEIGHTED SUM
+         ==================================================================== -->
+    <section class="slide" id="slide-13">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge orange">Vector Blending</div>
+          <h2 class="slide-title">Weighted Sum of Values</h2>
+          <p class="slide-subtitle">Attention is fundamentally a weighted sum: more relevant information exerts more influence on the outcome.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="weighted-sum-layout">
+            <div class="vector-blend-canvas">
+              <svg id="weighted-sum-svg"></svg>
+            </div>
+
+            <div class="glass-panel" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem;">
+              <div style="font-family: monospace; font-size: 1.15rem; color: #fff; line-height: 1.8;">
+                <span style="color:#f97316;">0.65 × V(animal)</span><br>
+                + <span style="color:#a855f7;">0.20 × V(tired)</span><br>
+                + <span style="color:#3b82f6;">0.10 × V(street)</span><br>
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 0.5rem 0;"></div>
+                = <span style="color:#22c55e;">Contextual Representation</span>
+              </div>
+              <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
+                Notice how the Value vector of <strong>"animal"</strong> dominates the composition, while irrelevant tokens contribute negligible signal.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 14: CONTEXTUAL REPRESENTATION (BEFORE & AFTER)
+         ==================================================================== -->
+    <section class="slide" id="slide-14">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge cyan">Transformation</div>
+          <h2 class="slide-title">Static vs Contextualized Representation</h2>
+          <p class="slide-subtitle">Attention transforms an isolated dictionary token into a rich, context-aware semantic vector.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="before-after-grid">
+            <div class="context-stage-card">
+              <div class="context-header">
+                <span class="context-status-tag static">Before Attention</span>
+                <span style="font-family:monospace; color:var(--text-muted);">Word2Vec / Static</span>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem;">
+                <div style="font-size: 2.8rem; font-weight: 800; color: #94a3b8;">"it"</div>
+                <div style="font-family:monospace; font-size:0.85rem; color:var(--text-dim); text-align:center;">
+                  [0.12, -0.45, 0.88, 0.03]<br>
+                  (Identical vector in every sentence)
+                </div>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+                No knowledge of whether "it" refers to an animal, a laptop, or a weather event.
+              </div>
+            </div>
+
+            <div class="context-stage-card after">
+              <div class="context-header">
+                <span class="context-status-tag dynamic">After Attention</span>
+                <span style="font-family:monospace; color:var(--cyan);">Transformer State</span>
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem;">
+                <div style="font-size: 2.8rem; font-weight: 800; color: var(--cyan);">"it*"</div>
+                <div style="font-family:monospace; font-size:0.85rem; color:#e2e8f0; text-align:center;">
+                  "it" + <span style="color:#f97316;">0.65×animal</span> + <span style="color:#a855f7;">0.20×tired</span><br>
+                  [0.89, 0.74, 0.95, -0.61]
+                </div>
+              </div>
+              <div style="font-size: 0.85rem; color: #a5f3fc; text-align: center;">
+                Now specifically encodes: <em>"the tired animal that didn't cross the street"</em>.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 15: SCALED DOT-PRODUCT ARCHITECTURE
+         ==================================================================== -->
+    <section class="slide" id="slide-15">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge purple">System Architecture</div>
+          <h2 class="slide-title">Scaled Dot-Product Attention</h2>
+          <p class="slide-subtitle">The standard structural block (Vaswani et al.) powering modern Transformer layers.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="arch-diagram-wrapper">
+            <div class="arch-svg-stage">
+              <svg id="architecture-svg" viewBox="0 0 540 480">
+                <!-- Inputs Q, K, V -->
+                <g transform="translate(140, 420)">
+                  <rect x="0" y="0" width="50" height="30" rx="6" fill="#0f172a" stroke="#00f0ff" stroke-width="2"/>
+                  <text x="25" y="20" fill="#00f0ff" font-family="monospace" font-weight="bold" text-anchor="middle">Q</text>
+                </g>
+                <g transform="translate(245, 420)">
+                  <rect x="0" y="0" width="50" height="30" rx="6" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+                  <text x="25" y="20" fill="#a855f7" font-family="monospace" font-weight="bold" text-anchor="middle">K</text>
+                </g>
+                <g transform="translate(350, 420)">
+                  <rect x="0" y="0" width="50" height="30" rx="6" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
+                  <text x="25" y="20" fill="#22c55e" font-family="monospace" font-weight="bold" text-anchor="middle">V</text>
+                </g>
+
+                <!-- MatMul 1 -->
+                <g transform="translate(170, 330)">
+                  <rect x="0" y="0" width="100" height="36" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+                  <text x="50" y="22" fill="#fff" font-family="monospace" font-size="13" text-anchor="middle">MatMul</text>
+                </g>
+
+                <!-- Scale -->
+                <g transform="translate(170, 260)">
+                  <rect x="0" y="0" width="100" height="36" rx="6" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+                  <text x="50" y="22" fill="#60a5fa" font-family="monospace" font-size="13" text-anchor="middle">Scale</text>
+                </g>
+
+                <!-- Mask (opt) -->
+                <g transform="translate(170, 190)">
+                  <rect x="0" y="0" width="100" height="36" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
+                  <text x="50" y="22" fill="#94a3b8" font-family="monospace" font-size="12" text-anchor="middle">Mask (opt.)</text>
+                </g>
+
+                <!-- Softmax -->
+                <g transform="translate(170, 120)">
+                  <rect x="0" y="0" width="100" height="36" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+                  <text x="50" y="22" fill="#c084fc" font-family="monospace" font-size="13" text-anchor="middle">SoftMax</text>
+                </g>
+
+                <!-- MatMul 2 -->
+                <g transform="translate(250, 50)">
+                  <rect x="0" y="0" width="110" height="38" rx="6" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
+                  <text x="55" y="24" fill="#4ade80" font-family="monospace" font-size="13" text-anchor="middle">MatMul (×V)</text>
+                </g>
+
+                <!-- Lines -->
+                <path d="M 165 420 L 165 370 L 210 370 L 210 366" stroke="#00f0ff" stroke-width="2" fill="none"/>
+                <path d="M 270 420 L 270 370 L 230 370 L 230 366" stroke="#a855f7" stroke-width="2" fill="none"/>
+                <line x1="220" y1="330" x2="220" y2="296" stroke="#38bdf8" stroke-width="2"/>
+                <line x1="220" y1="260" x2="220" y2="226" stroke="#38bdf8" stroke-width="2"/>
+                <line x1="220" y1="190" x2="220" y2="156" stroke="#38bdf8" stroke-width="2"/>
+                <path d="M 220 120 L 220 70 L 250 70" stroke="#a855f7" stroke-width="2" fill="none"/>
+                <path d="M 375 420 L 375 70 L 360 70" stroke="#22c55e" stroke-width="2" fill="none"/>
+                <line x1="305" y1="50" x2="305" y2="15" stroke="#4ade80" stroke-width="2.5"/>
+                <text x="305" y="10" fill="#4ade80" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">OUTPUT</text>
+              </svg>
+            </div>
+
+            <div class="arch-info-sidebar">
+              <div class="glass-panel" style="padding: 1.5rem;">
+                <h4 style="color:#00f0ff; margin-bottom:0.5rem;">Matrix Operations</h4>
+                <p style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">
+                  All steps execute concurrently on tensor cores as matrix multiplications, making Transformer layers extraordinarily efficient to compute in batches.
+                </p>
+              </div>
+
+              <div class="glass-panel" style="padding: 1.5rem;">
+                <h4 style="color:#a855f7; margin-bottom:0.5rem;">Multi-Head Extension</h4>
+                <p style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">
+                  In practice, models run 8 to 64 attention heads in parallel, allowing different heads to simultaneously track grammar, facts, and co-references.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 16: ADVANTAGES
+         ==================================================================== -->
+    <section class="slide" id="slide-16">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge green">Strengths</div>
+          <h2 class="slide-title">Why Attention Won</h2>
+          <p class="slide-subtitle">Five foundational advantages that made Transformers the standard architecture in modern AI.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="cards-row-5">
+            <div class="adv-card">
+              <div class="adv-icon">🌐</div>
+              <h4>Captures Relationships</h4>
+              <p>Identifies connections between any two words regardless of sentence location.</p>
+            </div>
+
+            <div class="adv-card">
+              <div class="adv-icon">💡</div>
+              <h4>Understands Context</h4>
+              <p>Changes word representations dynamically according to surroundings.</p>
+            </div>
+
+            <div class="adv-card">
+              <div class="adv-icon">🔗</div>
+              <h4>Long-Range Links</h4>
+              <p>Directly connects words separated by hundreds of intervening tokens.</p>
+            </div>
+
+            <div class="adv-card">
+              <div class="adv-icon">⚡</div>
+              <h4>Parallel Processing</h4>
+              <p>Processes entire sequences simultaneously on GPUs without sequential delay.</p>
+            </div>
+
+            <div class="adv-card">
+              <div class="adv-icon">🎯</div>
+              <h4>Rich Representations</h4>
+              <p>Creates multi-dimensional token states enriched with syntactic & factual signals.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 17: DISADVANTAGES & QUADRATIC COMPLEXITY
+         ==================================================================== -->
+    <section class="slide" id="slide-17">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge orange">Computational Limits</div>
+          <h2 class="slide-title">Where Attention Gets Expensive</h2>
+          <p class="slide-subtitle">Every token compares with every token: an O(N²) quadratic scaling that challenges long sequences.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="disadv-layout">
+            <div class="disadv-list">
+              <div class="disadv-item">
+                <span style="font-size:1.5rem;">🔥</span>
+                <div>
+                  <strong style="color:#fff;">Quadratic Compute Cost O(N²)</strong>
+                  <div style="font-size:0.85rem; color:#94a3b8;">Pairwise token comparisons scale with the square of sequence length.</div>
+                </div>
+              </div>
+
+              <div class="disadv-item">
+                <span style="font-size:1.5rem;">💾</span>
+                <div>
+                  <strong style="color:#fff;">High Memory Footprint</strong>
+                  <div style="font-size:0.85rem; color:#94a3b8;">Storing the full attention matrix across dozens of layers stresses GPU VRAM.</div>
+                </div>
+              </div>
+
+              <div class="disadv-item">
+                <span style="font-size:1.5rem;">📚</span>
+                <div>
+                  <strong style="color:#fff;">Resource Intensive</strong>
+                  <div style="font-size:0.85rem; color:#94a3b8;">Requires clusters of dedicated accelerators (TPUs/GPUs) for training.</div>
+                </div>
+              </div>
+
+              <div class="disadv-item">
+                <span style="font-size:1.5rem;">🧩</span>
+                <div>
+                  <strong style="color:#fff;">Interpretability Nuance</strong>
+                  <div style="font-size:0.85rem; color:#94a3b8;">Attention weights show correlation and focus, but don't always explain full causality.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="quadratic-visualizer-box">
+              <div class="seq-slider-row">
+                <span style="font-size:0.9rem; color:#e2e8f0;">Sequence Length:</span>
+                <input type="range" id="seq-length-slider" min="4" max="64" step="4" value="16" style="flex:1;">
+                <span id="seq-length-display" style="font-family:monospace; color:var(--cyan);">16 Tokens</span>
+              </div>
+
+              <div id="matrix-canvas-box">
+                <canvas id="matrix-canvas" width="320" height="320"></canvas>
+              </div>
+
+              <div id="seq-ops-display" style="font-family:monospace; font-size:1.1rem; color:var(--orange);">
+                256 Comparisons
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SLIDE 18: FINAL SUMMARY (PIPELINE)
+         ==================================================================== -->
+    <section class="slide" id="slide-18">
+      <div class="slide-content">
+        <div class="slide-header">
+          <div class="slide-badge green">Synthesis</div>
+          <h2 class="slide-title">The Complete Attention Pipeline</h2>
+          <p class="slide-subtitle">From raw words to contextual vectors powering the modern Transformer revolution.</p>
+        </div>
+
+        <div class="slide-body">
+          <div class="pipeline-container">
+            <div class="pipeline-flow-wrapper">
+              <div class="pipeline-node">
+                <span class="node-title">WORDS</span>
+                <span class="node-sub">Raw Tokens</span>
+              </div>
+              <span class="pipeline-arrow">→</span>
+
+              <div class="pipeline-node">
+                <span class="node-title">EMBEDDINGS</span>
+                <span class="node-sub">Coordinate Vectors</span>
+              </div>
+              <span class="pipeline-arrow">→</span>
+
+              <div class="pipeline-node">
+                <span class="node-title">Q, K, V</span>
+                <span class="node-sub">Linear Layers</span>
+              </div>
+              <span class="pipeline-arrow">→</span>
+
+              <div class="pipeline-node">
+                <span class="node-title">RELEVANCE</span>
+                <span class="node-sub">QKᵀ / √dₖ</span>
+              </div>
+              <span class="pipeline-arrow">→</span>
+
+              <div class="pipeline-node">
+                <span class="node-title">WEIGHTS</span>
+                <span class="node-sub">Softmax</span>
+              </div>
+              <span class="pipeline-arrow">→</span>
+
+              <div class="pipeline-node">
+                <span class="node-title">VALUES</span>
+                <span class="node-sub">Weighted Sum</span>
+              </div>
+              <span class="pipeline-arrow">→</span>
+
+              <div class="pipeline-node">
+                <span class="node-title">CONTEXT</span>
+                <span class="node-sub">Enriched Token</span>
+              </div>
+              <span class="pipeline-arrow">→</span>
+
+              <div class="pipeline-node" style="border-color:var(--cyan); box-shadow:0 0 20px var(--cyan-glow);">
+                <span class="node-title" style="color:var(--cyan);">TRANSFORMER</span>
+                <span class="node-sub">LLM Intelligence</span>
+              </div>
+            </div>
+
+            <div class="final-quote-card">
+              <p class="final-quote-text">
+                "Attention allows a model to decide what information matters for understanding each token."
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====================================================================
+       PRESENTATION DECK CONTROLS & DOCK
+       ==================================================================== -->
+  <footer id="deck-controls">
+    <button class="nav-btn" id="nav-prev" title="Previous Slide (←)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+
+    <div id="slide-counter">
+      Slide <span class="current">01</span> / <span class="total">18</span>
+    </div>
+
+    <button class="nav-btn" id="nav-next" title="Next Slide (→ or Space)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+
+    <button class="explain-trigger-btn" id="explain-btn" title="Presenter Notes & Deep Explanation">
+      <span>💡 Explain this</span>
+    </button>
+
+    <button class="icon-action-btn" id="presentation-mode-btn" title="Toggle Presentation Fullscreen (P / F)">
+      <span>⛶ Present</span>
+    </button>
+
+    <button class="icon-action-btn" id="shortcuts-help-btn" title="Keyboard Shortcuts (?)">
+      <span>?</span>
+    </button>
+  </footer>
+
+  <!-- ====================================================================
+       EXPLAIN DRAWER / MODAL
+       ==================================================================== -->
+  <aside id="explain-modal">
+    <div class="explain-header">
+      <h4 id="explain-title">💡 Explanation</h4>
+      <button class="explain-close" id="explain-close-btn">&times;</button>
+    </div>
+    <div class="explain-body" id="explain-body">
+      Select a slide to read the theoretical notes and pedagogical insights.
+    </div>
+  </aside>
+
+  <!-- ====================================================================
+       SHORTCUTS OVERLAY
+       ==================================================================== -->
+  <div id="shortcuts-modal">
+    <div class="shortcuts-dialog">
+      <h3 style="color:#fff; margin-bottom: 0.75rem;">Keyboard Shortcuts</h3>
+      <table class="shortcuts-table">
+        <tr><td><kbd>→</kbd> or <kbd>Space</kbd></td><td>Next Slide</td></tr>
+        <tr><td><kbd>←</kbd></td><td>Previous Slide</td></tr>
+        <tr><td><kbd>Home</kbd></td><td>First Slide</td></tr>
+        <tr><td><kbd>End</kbd></td><td>Last Slide</td></tr>
+        <tr><td><kbd>P</kbd> or <kbd>F</kbd></td><td>Toggle Presentation Mode</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Exit Presentation Mode</td></tr>
+        <tr><td><kbd>?</kbd></td><td>Toggle this shortcut guide</td></tr>
+      </table>
+      <button class="quiz-btn secondary" id="shortcuts-close" style="width: 100%; margin-top: 1.25rem;">Close</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/animations.js"></script>
+  <script src="js/embeddings.js"></script>
+  <script src="js/attention.js"></script>
+  <script src="js/presentation.js"></script>
+</body>
+</html>
