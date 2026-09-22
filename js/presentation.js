@@ -7,14 +7,14 @@
 class PresentationDeck {
   constructor() {
     this.currentSlide = 1;
-    this.totalSlides = 18;
+    this.totalSlides = 16;
     this.isPresentationMode = false;
     this.wheelTimeout = null;
     this.touchStartX = 0;
     this.touchStartY = 0;
 
     this.slides = document.querySelectorAll('.slide');
-    this.totalSlides = this.slides.length || 18;
+    this.totalSlides = this.slides.length || 16;
 
     this.init();
   }

@@ -29,12 +29,10 @@ $$\text{SEE IT} \longrightarrow \text{UNDERSTAND IT} \longrightarrow \text{NAME 
 10. **Query, Key, and Value**: The 3 pieces behind attention
 11. **Calculating Attention**: 6-step interactive stepper
 12. **Attention Formula**: Interactive formula breakdown $\text{Attention}(Q,K,V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$
-13. **Weighted Sum**: Value vectors blending into a contextual representation
-14. **Contextual Representation**: Static vs context-aware tokens
-15. **Scaled Dot-Product Attention**: Complete architecture diagram
-16. **Why Attention Won**: 5 core advantages of Transformers
-17. **Where Attention Gets Expensive**: $O(N^2)$ quadratic complexity visualizer
-18. **Final Pipeline**: Complete end-to-end token journey
+13. **Contextual Representation**: Static vs context-aware tokens
+14. **Why Attention Won**: 5 core advantages of Transformers
+15. **Where Attention Gets Expensive**: $O(N^2)$ quadratic complexity visualizer
+16. **Final Pipeline**: Complete end-to-end token journey
 
 ---
 

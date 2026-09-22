@@ -565,43 +565,9 @@
     </section>
 
     <!-- ====================================================================
-         SLIDE 13: WEIGHTED SUM
+         SLIDE 13: CONTEXTUAL REPRESENTATION (BEFORE & AFTER)
          ==================================================================== -->
     <section class="slide" id="slide-13">
-      <div class="slide-content">
-        <div class="slide-header">
-          <div class="slide-badge orange">Vector Blending</div>
-          <h2 class="slide-title">Weighted Sum of Values</h2>
-          <p class="slide-subtitle">Attention is fundamentally a weighted sum: more relevant information exerts more influence on the outcome.</p>
-        </div>
-
-        <div class="slide-body">
-          <div class="weighted-sum-layout">
-            <div class="vector-blend-canvas">
-              <svg id="weighted-sum-svg"></svg>
-            </div>
-
-            <div class="glass-panel" style="padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem;">
-              <div style="font-family: monospace; font-size: 1.15rem; color: #fff; line-height: 1.8;">
-                <span style="color:#f97316;">0.65 × V(animal)</span><br>
-                + <span style="color:#a855f7;">0.20 × V(tired)</span><br>
-                + <span style="color:#3b82f6;">0.10 × V(street)</span><br>
-                <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 0.5rem 0;"></div>
-                = <span style="color:#22c55e;">Contextual Representation</span>
-              </div>
-              <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
-                Notice how the Value vector of <strong>"animal"</strong> dominates the composition, while irrelevant tokens contribute negligible signal.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ====================================================================
-         SLIDE 14: CONTEXTUAL REPRESENTATION (BEFORE & AFTER)
-         ==================================================================== -->
-    <section class="slide" id="slide-14">
       <div class="slide-content">
         <div class="slide-header">
           <div class="slide-badge cyan">Transformation</div>
@@ -650,101 +616,9 @@
     </section>
 
     <!-- ====================================================================
-         SLIDE 15: SCALED DOT-PRODUCT ARCHITECTURE
+         SLIDE 14: ADVANTAGES
          ==================================================================== -->
-    <section class="slide" id="slide-15">
-      <div class="slide-content">
-        <div class="slide-header">
-          <div class="slide-badge purple">System Architecture</div>
-          <h2 class="slide-title">Scaled Dot-Product Attention</h2>
-          <p class="slide-subtitle">The standard structural block (Vaswani et al.) powering modern Transformer layers.</p>
-        </div>
-
-        <div class="slide-body">
-          <div class="arch-diagram-wrapper">
-            <div class="arch-svg-stage">
-              <svg id="architecture-svg" viewBox="0 0 540 480">
-                <!-- Inputs Q, K, V -->
-                <g transform="translate(140, 420)">
-                  <rect x="0" y="0" width="50" height="30" rx="6" fill="#0f172a" stroke="#00f0ff" stroke-width="2"/>
-                  <text x="25" y="20" fill="#00f0ff" font-family="monospace" font-weight="bold" text-anchor="middle">Q</text>
-                </g>
-                <g transform="translate(245, 420)">
-                  <rect x="0" y="0" width="50" height="30" rx="6" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
-                  <text x="25" y="20" fill="#a855f7" font-family="monospace" font-weight="bold" text-anchor="middle">K</text>
-                </g>
-                <g transform="translate(350, 420)">
-                  <rect x="0" y="0" width="50" height="30" rx="6" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
-                  <text x="25" y="20" fill="#22c55e" font-family="monospace" font-weight="bold" text-anchor="middle">V</text>
-                </g>
-
-                <!-- MatMul 1 -->
-                <g transform="translate(170, 330)">
-                  <rect x="0" y="0" width="100" height="36" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
-                  <text x="50" y="22" fill="#fff" font-family="monospace" font-size="13" text-anchor="middle">MatMul</text>
-                </g>
-
-                <!-- Scale -->
-                <g transform="translate(170, 260)">
-                  <rect x="0" y="0" width="100" height="36" rx="6" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
-                  <text x="50" y="22" fill="#60a5fa" font-family="monospace" font-size="13" text-anchor="middle">Scale</text>
-                </g>
-
-                <!-- Mask (opt) -->
-                <g transform="translate(170, 190)">
-                  <rect x="0" y="0" width="100" height="36" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 3"/>
-                  <text x="50" y="22" fill="#94a3b8" font-family="monospace" font-size="12" text-anchor="middle">Mask (opt.)</text>
-                </g>
-
-                <!-- Softmax -->
-                <g transform="translate(170, 120)">
-                  <rect x="0" y="0" width="100" height="36" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
-                  <text x="50" y="22" fill="#c084fc" font-family="monospace" font-size="13" text-anchor="middle">SoftMax</text>
-                </g>
-
-                <!-- MatMul 2 -->
-                <g transform="translate(250, 50)">
-                  <rect x="0" y="0" width="110" height="38" rx="6" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
-                  <text x="55" y="24" fill="#4ade80" font-family="monospace" font-size="13" text-anchor="middle">MatMul (×V)</text>
-                </g>
-
-                <!-- Lines -->
-                <path d="M 165 420 L 165 370 L 210 370 L 210 366" stroke="#00f0ff" stroke-width="2" fill="none"/>
-                <path d="M 270 420 L 270 370 L 230 370 L 230 366" stroke="#a855f7" stroke-width="2" fill="none"/>
-                <line x1="220" y1="330" x2="220" y2="296" stroke="#38bdf8" stroke-width="2"/>
-                <line x1="220" y1="260" x2="220" y2="226" stroke="#38bdf8" stroke-width="2"/>
-                <line x1="220" y1="190" x2="220" y2="156" stroke="#38bdf8" stroke-width="2"/>
-                <path d="M 220 120 L 220 70 L 250 70" stroke="#a855f7" stroke-width="2" fill="none"/>
-                <path d="M 375 420 L 375 70 L 360 70" stroke="#22c55e" stroke-width="2" fill="none"/>
-                <line x1="305" y1="50" x2="305" y2="15" stroke="#4ade80" stroke-width="2.5"/>
-                <text x="305" y="10" fill="#4ade80" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">OUTPUT</text>
-              </svg>
-            </div>
-
-            <div class="arch-info-sidebar">
-              <div class="glass-panel" style="padding: 1.5rem;">
-                <h4 style="color:#00f0ff; margin-bottom:0.5rem;">Matrix Operations</h4>
-                <p style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">
-                  All steps execute concurrently on tensor cores as matrix multiplications, making Transformer layers extraordinarily efficient to compute in batches.
-                </p>
-              </div>
-
-              <div class="glass-panel" style="padding: 1.5rem;">
-                <h4 style="color:#a855f7; margin-bottom:0.5rem;">Multi-Head Extension</h4>
-                <p style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">
-                  In practice, models run 8 to 64 attention heads in parallel, allowing different heads to simultaneously track grammar, facts, and co-references.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ====================================================================
-         SLIDE 16: ADVANTAGES
-         ==================================================================== -->
-    <section class="slide" id="slide-16">
+    <section class="slide" id="slide-14">
       <div class="slide-content">
         <div class="slide-header">
           <div class="slide-badge green">Strengths</div>
@@ -789,9 +663,9 @@
     </section>
 
     <!-- ====================================================================
-         SLIDE 17: DISADVANTAGES & QUADRATIC COMPLEXITY
+         SLIDE 15: DISADVANTAGES & QUADRATIC COMPLEXITY
          ==================================================================== -->
-    <section class="slide" id="slide-17">
+    <section class="slide" id="slide-15">
       <div class="slide-content">
         <div class="slide-header">
           <div class="slide-badge orange">Computational Limits</div>
@@ -856,9 +730,9 @@
     </section>
 
     <!-- ====================================================================
-         SLIDE 18: FINAL SUMMARY (PIPELINE)
+         SLIDE 16: FINAL SUMMARY (PIPELINE)
          ==================================================================== -->
-    <section class="slide" id="slide-18">
+    <section class="slide" id="slide-16">
       <div class="slide-content">
         <div class="slide-header">
           <div class="slide-badge green">Synthesis</div>
@@ -938,7 +812,7 @@
     </button>
 
     <div id="slide-counter">
-      Slide <span class="current">01</span> / <span class="total">18</span>
+      Slide <span class="current">01</span> / <span class="total">16</span>
     </div>
 
     <button class="nav-btn" id="nav-next" title="Next Slide (→ or Space)">

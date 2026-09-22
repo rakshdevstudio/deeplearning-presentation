@@ -65,28 +65,18 @@ const SLIDE_EXPLANATIONS = {
     <br>This compact equation is the core engine of ChatGPT, Claude, Gemini, and all modern LLMs. Click any component above to inspect its exact mathematical role.`
   },
   13: {
-    title: "Blending Values (Weighted Sum)",
-    body: `The final contextual representation is literally a recipe:
-    <br>$$\\text{Output} = 0.65 \\times V_{\\text{animal}} + 0.20 \\times V_{\\text{tired}} + 0.10 \\times V_{\\text{street}} + \\dots$$
-    <br>Tokens that matched strongly contribute the majority of their content vector, while irrelevant tokens contribute almost nothing.`
-  },
-  14: {
     title: "Static vs Contextualized",
     body: `Before attention, the token <strong>"it"</strong> had the exact same dictionary embedding regardless of whether the sentence was about an animal, a laptop, or a thunderstorm. After attention, <strong>"it"</strong> has absorbed features from <strong>"animal"</strong> and <strong>"tired"</strong>, turning it into a rich representation that uniquely means "the tired animal".`
   },
-  15: {
-    title: "Architecture & Multi-Head",
-    body: `In Scaled Dot-Product Attention, the operations run as efficient GPU matrix multiplications. In <strong>Multi-Head Attention</strong>, we run \\(h\\) independent attention heads simultaneously (e.g., 8 or 16 heads). One head can track grammatical subject-verb links, while another head tracks pronoun antecedents!`
-  },
-  16: {
+  14: {
     title: "Why Attention Won the AI Race",
     body: `Before Transformers (2017), RNNs and LSTMs suffered from sequential bottlenecks: token 100 couldn't be processed until tokens 1 through 99 were computed. Attention allows <strong>complete parallelization</strong> across GPU thousands of cores and connects distant tokens in a single step.`
   },
-  17: {
+  15: {
     title: "The \\(O(N^2)\\) Quadratic Bottleneck",
     body: `Because every token compares itself to every other token, a sequence of length \\(N\\) requires \\(N \\times N = N^2\\) comparisons. For 1,000 tokens, that's 1 million operations. For 100,000 tokens, that's 10 billion operations! This quadratic scaling is why ultra-long context windows require specialized hardware and algorithmic innovations.`
   },
-  18: {
+  16: {
     title: "End-to-End Synthesis",
     body: `From raw text to embedding vectors, through linear projections into Query, Key, and Value, dot-product relevance, softmax weights, and value blending, attention allows neural networks to construct deep, human-like linguistic understanding.`
   }
